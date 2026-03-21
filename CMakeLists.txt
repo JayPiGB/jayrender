@@ -20,7 +20,7 @@ find_package(OpenGL REQUIRED)
 
 add_executable(${CMAKE_PROJECT_NAME}
 	src/main.cpp
-	src/shader.cpp
+	src/shader/shader.cpp
 )
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE include)
