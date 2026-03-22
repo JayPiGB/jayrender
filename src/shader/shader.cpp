@@ -15,7 +15,7 @@ Shader& Shader::Use() {
 	return *this;
 }
 
-void Shader::Compile(const char* vertexSource, const char* fragmentSource, const char* geometrySource) {
+void Shader::Build(const char* vertexSource, const char* fragmentSource, const char* geometrySource) {
 	unsigned int vertexShader, fragmentShader, geometryShader;
 	
 	vertexShader = compileShader(vertexSource, VERTEX);

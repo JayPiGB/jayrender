@@ -21,6 +21,8 @@ find_package(OpenGL REQUIRED)
 add_executable(${CMAKE_PROJECT_NAME}
 	src/main.cpp
 	src/shader/shader.cpp
+	src/resource_manager/resource_manager.cpp
+	src/texture/texture.cpp
 )
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE include)
