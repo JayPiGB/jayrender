@@ -99,6 +99,7 @@ int main()
 
 		glm::mat3 normalMat = glm::mat3(glm::transpose(glm::inverse(model)));
 
+
 #pragma region LIGHT-SRC
 		lightSrcShader.Use();
 
@@ -130,6 +131,8 @@ int main()
 		glUniform3f(glGetUniformLocation(lightingShader.programId, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 
 		glUniformMatrix3fv(glGetUniformLocation(lightingShader.programId, "normalMat"), 1, GL_FALSE, glm::value_ptr(normalMat));
+
+		glUniform3f(glGetUniformLocation(lightingShader.programId, "viewerPos"), cam.position.x, cam.position.y, cam.position.z); 
 
 		glBindVertexArray(cubeVAO);
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, 0);

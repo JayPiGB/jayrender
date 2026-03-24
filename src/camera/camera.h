@@ -15,7 +15,7 @@ enum CAMERA_MOVEMENT {
 const float YAW = -90.0f;
 const float PITCH = 0.0f;
 const float ROW = 0.0f;
-const float SPEED = 25.0f;
+const float SPEED = 12.0f;
 const float ZOOM = 0.0f;
 
 class Camera {
@@ -47,7 +47,7 @@ public:
 		return glm::lookAt(position, position + front, up);
 	}
 
-	void processMouseMovement(float xoffset, float yoffset) {
+	void processMouseMovement(float xoffset, float yoffset){
 		xoffset *= mouseSensitivity;
 		yoffset *= mouseSensitivity;
 
