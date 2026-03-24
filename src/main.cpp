@@ -9,7 +9,7 @@
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 400;
 
-Camera cam(-1.f, 0.0f, 5.0f);
+Camera cam(0.0f, 0.0f, 5.0f);
 bool firstMouse = true;
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
@@ -22,6 +22,7 @@ glm::vec3 lightPos(1.2f, 0.0f, 2.0f);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_movement_callback(GLFWwindow* window, double xposIn, double yposIn);
 void processKeyboardInput(GLFWwindow* window, float deltaTime);
+void moveLightSource(GLFWwindow* window, float deltaTime);
 
 int main()
 {
@@ -55,7 +56,8 @@ int main()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)(sizeof(float) * 3));
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO); 
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
@@ -95,6 +97,8 @@ int main()
 		glm::mat4 projection = glm::perspective(glm::radians(45.0f), static_cast<float>(SCR_WIDTH)/static_cast<float>(SCR_HEIGHT), 0.1f, 100.0f);
 		glm::mat4 view = cam.getViewMatrix();
 
+		glm::mat3 normalMat = glm::mat3(glm::transpose(glm::inverse(model)));
+
 #pragma region LIGHT-SRC
 		lightSrcShader.Use();
 
@@ -124,6 +128,9 @@ int main()
 		glUniformMatrix4fv(glGetUniformLocation(lightingShader.programId, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
 		glUniform3f(glGetUniformLocation(lightingShader.programId, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+
+		glUniformMatrix3fv(glGetUniformLocation(lightingShader.programId, "normalMat"), 1, GL_FALSE, glm::value_ptr(normalMat));
+
 		glBindVertexArray(cubeVAO);
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, 0);
 #pragma endregion
@@ -138,6 +145,7 @@ int main()
 
 void processKeyboardInput(GLFWwindow* window, float deltaTime)
 {
+	moveLightSource(window, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
 		cam.moveCamera(CAMERA_MOVEMENT::FRONT, deltaTime);
 	}
@@ -163,6 +171,36 @@ void processKeyboardInput(GLFWwindow* window, float deltaTime)
 
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, true);
+	}
+}
+
+void moveLightSource(GLFWwindow* window, float deltaTime)
+{
+	float lightSrcSpeed = 2.0f * deltaTime;
+
+	if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
+	{
+		lightPos += glm::vec3(0.0f, 0.0f, -1.0f) * lightSrcSpeed;
+	}
+	if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
+	{
+		lightPos += glm::vec3(-1.0f, 0.0f, 0.0f) * lightSrcSpeed;
+	}
+	if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS)
+	{
+		lightPos += glm::vec3(0.0f, 0.0f, 1.0f) * lightSrcSpeed;
+	}
+	if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
+	{
+		lightPos += glm::vec3(1.0f, 0.0f, 0.0f) * lightSrcSpeed;
+	}
+	if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS)
+	{
+		lightPos += glm::vec3(0.0f, 1.0f, 0.0f) * lightSrcSpeed;
+	}
+	if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
+	{
+		lightPos += glm::vec3(0.0f, -1.0f, 0.0f) * lightSrcSpeed;
 	}
 }
 
