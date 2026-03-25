@@ -78,9 +78,9 @@ int main()
 	Shader lightingShader = ResourceManager::LoadShader("resources/shader.vert", "resources/phong.frag", nullptr, "lightingShader");
 	Shader lightSrcShader = ResourceManager::LoadShader("resources/shader.vert", "resources/shader.frag", nullptr, "lightSrcShader");
 
-	float ambientStr = 0.0f;
-	float specularStr = 0.0f;
-	float shininess = 0.0f;
+	float ambientStr = 0.2f;
+	float specularStr = 0.5f;
+	int shininess = 32;
 	std::cout << "ambient strength: ";
 	std::cin >> ambientStr;
 
@@ -148,6 +148,12 @@ int main()
 		glUniformMatrix3fv(glGetUniformLocation(lightingShader.programId, "normalMat"), 1, GL_FALSE, glm::value_ptr(normalMat));
 
 		glUniform3f(glGetUniformLocation(lightingShader.programId, "viewerPos"), cam.position.x, cam.position.y, cam.position.z); 
+
+		glUniform1f(glGetUniformLocation(lightingShader.programId, "ambientStr"), ambientStr);
+
+		glUniform1f(glGetUniformLocation(lightingShader.programId, "specularStr"), specularStr);
+
+		glUniform1i(glGetUniformLocation(lightingShader.programId, "shininess"), shininess);
 
 		glBindVertexArray(cubeVAO);
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, 0);

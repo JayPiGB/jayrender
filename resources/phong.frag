@@ -5,6 +5,7 @@ in vec3 FragPos;
 
 uniform float ambientStr;
 uniform float specularStr;
+uniform int shininess;
 
 uniform vec3 objectColor;
 uniform vec3 lightColor;
@@ -27,7 +28,7 @@ void main()
 
 	vec3 reflectDirection = reflect(-lightDirection, norm);
 	vec3 viewerDirection = normalize(viewerPos - FragPos);
-	float spec = pow(max(dot(reflectDirection, viewerDirection), 0), 32);
+	float spec = pow(max(dot(reflectDirection, viewerDirection), 0), shininess);
 
 	vec3 specular = specularStr * spec * lightColor;
 
