@@ -1,6 +1,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <iostream>
+
 #include "camera/camera.h"	
 #include "data/cubes.h"
 #include "shader/shader.h"
@@ -23,6 +25,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_movement_callback(GLFWwindow* window, double xposIn, double yposIn);
 void processKeyboardInput(GLFWwindow* window, float deltaTime);
 void moveLightSource(GLFWwindow* window, float deltaTime);
+void autoMoveLightSrc(float currentTime);
 
 int main()
 {
@@ -72,10 +75,20 @@ int main()
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 
-	Shader lightingShader = ResourceManager::LoadShader("resources/shader.vert", "resources/lighting.frag", nullptr, "lightingShader");
+	Shader lightingShader = ResourceManager::LoadShader("resources/shader.vert", "resources/phong.frag", nullptr, "lightingShader");
 	Shader lightSrcShader = ResourceManager::LoadShader("resources/shader.vert", "resources/shader.frag", nullptr, "lightSrcShader");
 
-	
+	float ambientStr = 0.0f;
+	float specularStr = 0.0f;
+	float shininess = 0.0f;
+	std::cout << "ambient strength: ";
+	std::cin >> ambientStr;
+
+	std::cout << "specular strength: ";
+	std::cin >> specularStr;
+
+	std::cout << "shininess (powers of 2): ";
+	std::cin >> shininess;
 
 	while(!glfwWindowShouldClose(window))
 	{
@@ -89,6 +102,8 @@ int main()
 
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		autoMoveLightSrc(currentTime);
 
 		glm::mat4 model(1.0f);
 		model = glm::translate(model, lightPos);
@@ -144,6 +159,14 @@ int main()
 	}
 
 	return 0;
+}
+
+void autoMoveLightSrc(float currentTime)
+{
+	float radius = 1.2;
+	// lightPos.y = radius * sin(currentTime);
+	lightPos.x = radius * cos(currentTime);
+	lightPos.z = radius * sin(currentTime);
 }
 
 void processKeyboardInput(GLFWwindow* window, float deltaTime)
