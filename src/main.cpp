@@ -75,20 +75,20 @@ int main()
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 
-	Shader lightingShader = ResourceManager::LoadShader("resources/shader.vert", "resources/phong.frag", nullptr, "lightingShader");
+	Shader lightingShader = ResourceManager::LoadShader("resources/shader.vert", "resources/phong_viewspace.frag", nullptr, "lightingShader");
 	Shader lightSrcShader = ResourceManager::LoadShader("resources/shader.vert", "resources/shader.frag", nullptr, "lightSrcShader");
 
 	float ambientStr = 0.2f;
 	float specularStr = 0.5f;
 	int shininess = 32;
-	std::cout << "ambient strength: ";
-	std::cin >> ambientStr;
-
-	std::cout << "specular strength: ";
-	std::cin >> specularStr;
-
-	std::cout << "shininess (powers of 2): ";
-	std::cin >> shininess;
+	// std::cout << "ambient strength: ";
+	// std::cin >> ambientStr;
+	//
+	// std::cout << "specular strength: ";
+	// std::cin >> specularStr;
+	//
+	// std::cout << "shininess (powers of 2): ";
+	// std::cin >> shininess;
 
 	while(!glfwWindowShouldClose(window))
 	{
@@ -111,9 +111,6 @@ int main()
 
 		glm::mat4 projection = glm::perspective(glm::radians(45.0f), static_cast<float>(SCR_WIDTH)/static_cast<float>(SCR_HEIGHT), 0.1f, 100.0f);
 		glm::mat4 view = cam.getViewMatrix();
-
-		glm::mat3 normalMat = glm::mat3(glm::transpose(glm::inverse(model)));
-
 
 #pragma region LIGHT-SRC
 		lightSrcShader.Use();
@@ -144,8 +141,6 @@ int main()
 		glUniformMatrix4fv(glGetUniformLocation(lightingShader.programId, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
 		glUniform3f(glGetUniformLocation(lightingShader.programId, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
-
-		glUniformMatrix3fv(glGetUniformLocation(lightingShader.programId, "normalMat"), 1, GL_FALSE, glm::value_ptr(normalMat));
 
 		glUniform3f(glGetUniformLocation(lightingShader.programId, "viewerPos"), cam.position.x, cam.position.y, cam.position.z); 
 

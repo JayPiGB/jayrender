@@ -6,12 +6,24 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
+uniform vec3 lightPos;
+
 out vec3 Normal;
+out vec3 NormalView;
 out vec3 FragPos;
+out vec3 FragPosView;
+out vec3 LightPosView;
 
 void main()
 {
 	gl_Position = projection * view * model * vec4(aPos, 1.0);
-	Normal = aNormal;
+
+	mat3 normalMat = mat3(transpose(inverse(model)));
+	Normal = normalize(normalMat * aNormal);
 	FragPos = vec3(model * vec4(aPos, 1.0));
+	
+	mat3 normalMatView = mat3(transpose(inverse(view * model))); 
+	NormalView = normalize(normalMatView * aNormal);
+	FragPosView = vec3(view * model * vec4(aPos, 1.0));
+	LightPosView = vec3(view * vec4(lightPos, 0.0));
 }
