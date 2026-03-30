@@ -1,8 +1,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <iostream>
-
 #include "camera/camera.h"	
 #include "data/cubes.h"
 #include "shader/shader.h"
@@ -75,20 +73,12 @@ int main()
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 
-	Shader lightingShader = ResourceManager::LoadShader("resources/shader.vert", "resources/phong_viewspace.frag", nullptr, "lightingShader");
+	Shader lightingShader = ResourceManager::LoadShader("resources/gouraud.vert", "resources/gouraud.frag", nullptr, "lightingShader");
 	Shader lightSrcShader = ResourceManager::LoadShader("resources/shader.vert", "resources/shader.frag", nullptr, "lightSrcShader");
 
-	float ambientStr = 0.2f;
-	float specularStr = 0.5f;
+	float ambientStr = 0.1f;
+	float specularStr = 1.0f;
 	int shininess = 32;
-	// std::cout << "ambient strength: ";
-	// std::cin >> ambientStr;
-	//
-	// std::cout << "specular strength: ";
-	// std::cin >> specularStr;
-	//
-	// std::cout << "shininess (powers of 2): ";
-	// std::cin >> shininess;
 
 	while(!glfwWindowShouldClose(window))
 	{
