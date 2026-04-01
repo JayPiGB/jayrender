@@ -73,12 +73,8 @@ int main()
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 
-	Shader lightingShader = ResourceManager::LoadShader("resources/gouraud.vert", "resources/gouraud.frag", nullptr, "lightingShader");
+	Shader lightingShader = ResourceManager::LoadShader("resources/shader.vert", "resources/phong.frag", nullptr, "lightingShader");
 	Shader lightSrcShader = ResourceManager::LoadShader("resources/shader.vert", "resources/shader.frag", nullptr, "lightSrcShader");
-
-	float ambientStr = 0.1f;
-	float specularStr = 1.0f;
-	int shininess = 32;
 
 	while(!glfwWindowShouldClose(window))
 	{
@@ -134,11 +130,21 @@ int main()
 
 		glUniform3f(glGetUniformLocation(lightingShader.programId, "viewerPos"), cam.position.x, cam.position.y, cam.position.z); 
 
-		glUniform1f(glGetUniformLocation(lightingShader.programId, "ambientStr"), ambientStr);
+		glUniform3f(glGetUniformLocation(lightingShader.programId, "material.ambient"), 1.0f, 0.5f, 0.31f);
 
-		glUniform1f(glGetUniformLocation(lightingShader.programId, "specularStr"), specularStr);
+		glUniform3f(glGetUniformLocation(lightingShader.programId, "material.diffuse"), 1.0f, 0.5f, 0.31f);
 
-		glUniform1i(glGetUniformLocation(lightingShader.programId, "shininess"), shininess);
+		glUniform3f(glGetUniformLocation(lightingShader.programId, "material.specular"), 0.5f, 0.5f, 0.5f);
+
+		glUniform1f(glGetUniformLocation(lightingShader.programId, "material.shininess"), 32.0f);
+
+		glUniform3f(glGetUniformLocation(lightingShader.programId, "light.position"), lightPos.x, lightPos.y, lightPos.z);
+
+		glUniform3f(glGetUniformLocation(lightingShader.programId, "light.ambient"), 0.2f, 0.2f, 0.2f);
+
+		glUniform3f(glGetUniformLocation(lightingShader.programId, "light.diffuse"), 0.5f, 0.5f, 0.5f);
+
+		glUniform3f(glGetUniformLocation(lightingShader.programId, "light.specular"), 1.0f, 1.0f, 1.0f);
 
 		glBindVertexArray(cubeVAO);
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, 0);
