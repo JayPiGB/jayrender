@@ -23,6 +23,8 @@ add_executable(${CMAKE_PROJECT_NAME}
 	src/shader/shader.cpp
 	src/resource_manager/resource_manager.cpp
 	src/texture/texture.cpp
+	src/data/material/material.cpp
+	src/data/light/light.cpp
 )
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE include)

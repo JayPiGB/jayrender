@@ -3,6 +3,8 @@
 
 #include "camera/camera.h"	
 #include "data/cubes.h"
+#include "data/light/light.h"
+#include "data/material/material.h"
 #include "shader/shader.h"
 #include "resource_manager/resource_manager.h"
 
@@ -16,6 +18,8 @@ float lastY = SCR_HEIGHT / 2.0f;
 
 float lastTime = 0.0f;
 float deltaTime = 0.0f;
+
+unsigned char autoLightMovement = false;
 
 glm::vec3 lightPos(1.2f, 0.0f, 2.0f);
 
@@ -76,6 +80,14 @@ int main()
 	Shader lightingShader = ResourceManager::LoadShader("resources/shader.vert", "resources/phong.frag", nullptr, "lightingShader");
 	Shader lightSrcShader = ResourceManager::LoadShader("resources/shader.vert", "resources/shader.frag", nullptr, "lightSrcShader");
 
+	glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods) 
+			{ 
+				if (key == GLFW_KEY_M && action == GLFW_PRESS)
+				{
+					autoLightMovement = !autoLightMovement; 
+				}
+			});
+
 	while(!glfwWindowShouldClose(window))
 	{
 		int width, height;
@@ -89,7 +101,7 @@ int main()
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		autoMoveLightSrc(currentTime);
+		if (autoLightMovement) { autoMoveLightSrc(currentTime); }
 
 		glm::mat4 model(1.0f);
 		model = glm::translate(model, lightPos);
@@ -130,21 +142,12 @@ int main()
 
 		glUniform3f(glGetUniformLocation(lightingShader.programId, "viewerPos"), cam.position.x, cam.position.y, cam.position.z); 
 
-		glUniform3f(glGetUniformLocation(lightingShader.programId, "material.ambient"), 1.0f, 0.5f, 0.31f);
+ 		Material cubeMaterial(glm::vec3(1.0f, 0.5f, 0.31f), glm::vec3(1.0f, 0.5f, 0.31f), glm::vec3(0.5f, 0.5f, 0.5f), 32.0f);
 
-		glUniform3f(glGetUniformLocation(lightingShader.programId, "material.diffuse"), 1.0f, 0.5f, 0.31f);
+		Light lighSource(lightPos, glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-		glUniform3f(glGetUniformLocation(lightingShader.programId, "material.specular"), 0.5f, 0.5f, 0.5f);
-
-		glUniform1f(glGetUniformLocation(lightingShader.programId, "material.shininess"), 32.0f);
-
-		glUniform3f(glGetUniformLocation(lightingShader.programId, "light.position"), lightPos.x, lightPos.y, lightPos.z);
-
-		glUniform3f(glGetUniformLocation(lightingShader.programId, "light.ambient"), 0.2f, 0.2f, 0.2f);
-
-		glUniform3f(glGetUniformLocation(lightingShader.programId, "light.diffuse"), 0.5f, 0.5f, 0.5f);
-
-		glUniform3f(glGetUniformLocation(lightingShader.programId, "light.specular"), 1.0f, 1.0f, 1.0f);
+		cubeMaterial.passMaterialToShader(lightingShader.programId);
+		lighSource.passLightToShader(lightingShader.programId);
 
 		glBindVertexArray(cubeVAO);
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, 0);
