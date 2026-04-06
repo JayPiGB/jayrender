@@ -1,5 +1,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 
 #include "camera/camera.h"	
 #include "data/cubes.h"
@@ -7,6 +10,7 @@
 #include "data/material/material.h"
 #include "shader/shader.h"
 #include "resource_manager/resource_manager.h"
+
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 400;
@@ -45,6 +49,17 @@ int main()
 	glfwSetCursorPosCallback(window, mouse_movement_callback);
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+	// Setup Dear ImGui context
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+	// Setup Platform/Renderer backends
+	ImGui_ImplGlfw_InitForOpenGL(window, true);          // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
+	ImGui_ImplOpenGL3_Init();
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -110,7 +125,7 @@ int main()
 		glm::mat4 projection = glm::perspective(glm::radians(45.0f), static_cast<float>(SCR_WIDTH)/static_cast<float>(SCR_HEIGHT), 0.1f, 100.0f);
 		glm::mat4 view = cam.getViewMatrix();
 
-#pragma region LIGHT-SRC
+#pragma region LIGHT_SRC
 		lightSrcShader.Use();
 
 		glUniformMatrix4fv(glGetUniformLocation(lightSrcShader.programId, "model"), 1, GL_FALSE, glm::value_ptr(model));
@@ -151,6 +166,17 @@ int main()
 
 		glBindVertexArray(cubeVAO);
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, 0);
+#pragma endregion
+
+#pragma region IMGUI
+		// Start the Dear ImGui frame
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+		ImGui::ShowDemoWindow(); // Show demo window! :)
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 #pragma endregion
 
 		glfwSwapBuffers(window);
