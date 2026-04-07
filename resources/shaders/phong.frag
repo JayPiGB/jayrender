@@ -2,10 +2,13 @@
 
 in vec3 Normal;
 in vec3 FragPos;
+in vec2 TexCoords;
 
 uniform vec3 lightColor;
 uniform vec3 lightPos;
 uniform vec3 viewerPos;
+
+uniform sampler2D containerTex;
 
 struct Material
 {
@@ -44,5 +47,5 @@ void main()
 	vec3 specular = light.specular * (spec * material.specular);
 
 	vec3 result = ambient + diffuse + specular;
-	FragColor = vec4(result, 1.0);
+	FragColor = vec4(result, 1.0) * texture(containerTex, TexCoords);
 }
